@@ -105,6 +105,8 @@ unsigned long previousMillis = 0;
 unsigned long previousLoopMillis = 0;
 unsigned long currentMillis = 0;
 unsigned long cooldown = 0;
+unsigned long keyTimer = 0;
+String CurrentInput = "";
 unsigned long deltaTime = 0;
 unsigned long uptime = 0;
 bool shouldReboot = false;
@@ -380,4 +382,13 @@ void ICACHE_RAM_ATTR loop()
 			}
 		}
 	}
+    // Keep an eye on timeout waiting for keypress after starting with a *
+    // Clear code and timer when timeout is reached
+    if (keyTimer > 0 && millis() - keyTimer >= KEYBOARD_TIMEOUT_MILIS)
+    {
+      Serial.println("Keycode timeout");
+      keyTimer = 0;
+      CurrentInput = "";
+    }
+
 }
