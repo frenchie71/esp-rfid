@@ -35,6 +35,7 @@ SOFTWARE.
 #include <Ticker.h>
 #include "Ntp.h"
 #include <AsyncMqttClient.h>
+#include "magicnumbers.h"
 
  //#define DEBUG
 
