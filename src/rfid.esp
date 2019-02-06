@@ -266,7 +266,7 @@ void ICACHE_FLASH_ATTR rfidloop()
 			else
 				Serial.print(username);
 #endif
-			if (AccType == 1)
+			if (AccType == ACCESS_GRANTED)
 			{
 				unsigned long validL = json["validuntil"];
 				unsigned long nowL = now();

@@ -156,5 +156,106 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   Serial.print("  total: ");
   Serial.println(total);
 #endif
-// @TODO: read totp value, compare to user salt and if correct set relay variable
+	if (len > 0){ // we do have a payload
+#ifdef DEBUG
+  		Serial.print("  payload: ");
+  		Serial.println(payload);
+#endif
+		// in order to open the door via MQTT, one needs to provide a valid username
+		// and a valid one-time password calculated by TOTP
+		// separated and terminated by a colon, e.g. john:123456:
+		// colon at the end is a lazy way as payload might not be 0terminated
+
+		char *user,*otp,*saveptr;
+		user=strtok_r(payload,":",&saveptr);
+		otp=strtok_r(NULL,":",&saveptr);
+		if ((user != NULL) && (otp != NULL)){ // we have a valid user:otp pair
+			// lets convert to uppercase in order to be case insensitive here
+			 char *s = user;
+			 while (*s) {
+    			*s = toupper((unsigned char) *s);
+    			s++;
+  			}
+#ifdef DEBUG
+  			Serial.print("  user: ");
+  			Serial.println(user);
+  			Serial.print("  otp: ");
+  			Serial.println(otp);
+#endif
+			// now find the user in the database and check if the one time password is valid
+			// if so, open the door
+			// publish the result to MQTT
+
+			Dir dir = SPIFFS.openDir("/P/"); // open the  directory
+			activateRelay = false;
+
+			while (dir.next() && (activateRelay == false)) { // if in the meanwhile we have found the user we do not need to look further
+				String uid = dir.fileName(); // filename == uid
+				uid.remove(0, 3); // removve the path name from the filename
+				File f = SPIFFS.open(dir.fileName(), "r"); // open for read
+				size_t size = f.size();
+				std::unique_ptr<char[]> buf(new char[size]); // allocate one-time read buffer
+				f.readBytes(buf.get(), size);
+				DynamicJsonBuffer jsonBuffer2;
+				JsonObject &json = jsonBuffer2.parseObject(buf.get()); // parse buffer to json object
+				if (json.success()) {
+					String username = json["user"];
+					username.toUpperCase();
+					if (username.equals(user)){
+						int AccType = json["acctype"];
+#ifdef DEBUG
+						Serial.print("[ INFO ] FOUND User Name: ");
+						Serial.println(username);
+#endif
+						if (AccType == ACCESS_GRANTED)
+						{
+							unsigned long validuntil = json["validuntil"];
+							unsigned long nowL = now();
+							if (validuntil > nowL)
+							{
+								// Username, Access and valid - lets check the totp code
+								// @TODO: store totpsalt in user record
+								// for the time being we use a hardcoded key
+								//String totpSalt = json["totpsalt"];
+								String totpSalt = uid + "vhcn934trtvn8zt"; // we add the pin to the salt so the user must have known the pin in order to generate correct key
+ 								uint8_t keyBytes[TOTP_SECRET_BYTE_COUNT];
+    							for (int j = 0; j < TOTP_SECRET_BYTE_COUNT; j++)
+									keyBytes[j] = totpSalt.charAt(j);
+								int totpCode = atoi(otp);
+								yield();
+								if (ESP8266TOTP::IsTokenValid(nowL, keyBytes, totpCode)) 
+								{
+									Serial.println("1");
+									activateRelay = true;
+#ifdef DEBUG
+									Serial.println(" User has access, relay activated");
+#endif
+								}
+								else
+								{
+#ifdef DEBUG
+									Serial.println(" User has access, but wrong one time password");
+#endif
+								}
+								yield();
+							}
+							else
+							{
+#ifdef DEBUG
+								Serial.println(" User account expired");
+#endif
+							}
+						} // Access_Granted
+						else
+						{
+#ifdef DEBUG
+							Serial.println(" User exists but has no access");
+#endif
+						}
+					} // username equals user	
+
+				} // json success
+			} // dir next
+		}	// user, otp != NULL
+	} // len > 0
 }
