@@ -36,8 +36,9 @@ SOFTWARE.
 #include "Ntp.h"
 #include <AsyncMqttClient.h>
 #include "magicnumbers.h"
+#include <ESP8266TOTP.h>
 
- //#define DEBUG
+#define DEBUG
 
 #ifdef OFFICIALBOARD
 
@@ -127,6 +128,7 @@ char *deviceHostname = NULL;
 
 int mqttenabled = 0;
 char *mqttTopic = NULL;
+char *mqttTOTTopic = NULL; // the Time based one time password (TOTP) topic
 char *mhs = NULL;
 char *muser = NULL;
 char *mpas = NULL;

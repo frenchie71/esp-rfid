@@ -100,7 +100,7 @@ bool ICACHE_FLASH_ATTR connectSTA(const char *ssid, const char *password, byte b
 	Serial.print(ssid);
 #endif
 	unsigned long now = millis();
-	uint8_t timeout = 20; // define when to time out in seconds
+	uint8_t timeout = WIFI_CONNECT_TIMEOUT; // define when to time out in seconds
 	Serial.println();
 	do
 	{

@@ -10,5 +10,6 @@
 
 // timing constants
 
-#define COOLDOWN_MILIS 2000
-#define KEYBOARD_TIMEOUT_MILIS 10000
+#define COOLDOWN_MILIS 2000 // Milliseconds the RFID reader will be blocked between inouts 
+#define KEYBOARD_TIMEOUT_MILIS 10000 // timeout in milis for keyboard input
+#define WIFI_CONNECT_TIMEOUT 30 // number of seconds we try to connect in station mode

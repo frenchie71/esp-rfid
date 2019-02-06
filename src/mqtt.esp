@@ -85,7 +85,9 @@ void mqtt_publish_access(time_t accesstime, String const &isknown, String const 
 		root["isKnown"] = isknown;
 		root["access"] = type;
 		root["username"] = user;
+#ifndef PRIVACY
 		root["uid"] = uid;
+#endif
 		String mqttBuffer;
 		root.printTo(mqttBuffer);
 		mqttClient.publish(topic, 0, false, mqttBuffer.c_str());
@@ -111,4 +113,48 @@ void onMqttConnect(bool sessionPresent) {
 		writeEvent("INFO", "mqtt", "Connected to MQTT Server", "Session Present");
 	}
 	mqtt_publish_boot(now(), WiFi.SSID(), WiFi.localIP().toString());
+	uint16_t packetIdTOT = mqttClient.subscribe(mqttTOTTopic, 0);
+#ifdef DEBUG	
+  	Serial.print("Subscribing at QoS 0, packetId: ");
+  	Serial.println(packetIdTOT);
+#endif
+}
+
+void onMqttSubscribe(uint16_t packetId, uint8_t qos) {
+#ifdef DEBUG
+  Serial.println("Subscribe acknowledged.");
+  Serial.print("  packetId: ");
+  Serial.println(packetId);
+  Serial.print("  qos: ");
+  Serial.println(qos);
+#endif
+}
+
+void onMqttUnsubscribe(uint16_t packetId) {
+#ifdef DEBUG
+  Serial.println("Unsubscribe acknowledged.");
+  Serial.print("  packetId: ");
+  Serial.println(packetId);
+#endif
+}
+
+void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
+#ifdef DEBUG
+  Serial.println("Publish received.");
+  Serial.print("  topic: ");
+  Serial.println(topic);
+  Serial.print("  qos: ");
+  Serial.println(properties.qos);
+  Serial.print("  dup: ");
+  Serial.println(properties.dup);
+  Serial.print("  retain: ");
+  Serial.println(properties.retain);
+  Serial.print("  len: ");
+  Serial.println(len);
+  Serial.print("  index: ");
+  Serial.println(index);
+  Serial.print("  total: ");
+  Serial.println(total);
+#endif
+// @TODO: read totp value, compare to user salt and if correct set relay variable
 }
