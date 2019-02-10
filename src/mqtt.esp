@@ -217,6 +217,8 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 								// @TODO: store totpsalt in user record
 								// for the time being we use a hardcoded key
 								//String totpSalt = json["totpsalt"];
+								
+								/*
 								String totpSalt = uid + "vhcn934trtvn8zt"; // we add the pin to the salt so the user must have known the pin in order to generate correct key
  								uint8_t keyBytes[TOTP_SECRET_BYTE_COUNT];
     							for (int j = 0; j < TOTP_SECRET_BYTE_COUNT; j++)
@@ -224,6 +226,8 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 								int totpCode = atoi(otp);
 								yield();
 								if (ESP8266TOTP::IsTokenValid(nowL, keyBytes, totpCode)) 
+								*/
+								if (otp == json["uid"]) // compare UID plain for the moment
 								{
 									Serial.println("1");
 									activateRelay = true;
