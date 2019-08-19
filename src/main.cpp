@@ -38,7 +38,8 @@ SOFTWARE.
 #include "magicnumbers.h"
 //#include <ESP8266TOTP.h>
 
-#define DEBUG
+//#define DEBUG
+#undef DEBUG
 
 #ifdef OFFICIALBOARD
 
@@ -218,6 +219,26 @@ void ICACHE_FLASH_ATTR setup()
 		configMode = true;
 	}
 	setupWebServer();
+/*
+	DynamicJsonBuffer jsonBuffer;
+	JsonObject &root = jsonBuffer.createObject();
+	root["username"] = "12345";
+	root["acctype"] = 2;
+	SPIFFS.remove("/latestlog.json");
+	SPIFFS.remove("/eventlog.json");
+	
+	File latestlog = SPIFFS.open("/latestlog.json", "w");
+	for (int i=1 ; i<1000; i++)
+	{
+		root["uid"] = i;
+		root["timestamp"] = now();
+		root.printTo(latestlog);
+		latestlog.print("\n");
+	}
+	latestlog.close();
+*/
+	logFileMaintenance ("/latestlog.json");
+	logFileMaintenance ("/eventlog.json");
 	writeEvent("INFO", "sys", "System setup completed, running", "");
 }
 

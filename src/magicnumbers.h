@@ -17,3 +17,10 @@
 // user related numbers
 
 #define ACCESS_GRANTED 1
+
+// System defines
+
+// Logfile operation takes too long with large logfiles.
+// if the file grows above this size, we will truncate it.
+
+#define MAXLOGSIZE 20000
