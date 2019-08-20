@@ -38,7 +38,7 @@ void ICACHE_FLASH_ATTR rfidloop()
 		if (wg.available())
 		{
           // Detect Wiegand26 and Wiegand34 keyfob
-          if (String(wg.getWiegandType()) == "26" || String(wg.getWiegandType()) == "34")
+          if (wg.getWiegandType() == WIEGANDTYPE_PICC26 || wg.getWiegandType() == WIEGANDTYPE_PICC34)
           {
 
 #ifdef DEBUG
@@ -50,26 +50,20 @@ void ICACHE_FLASH_ATTR rfidloop()
 				cooldown = millis() + COOLDOWN_MILIS;
 		  }
 		  // keypad stuff
-          // When * is pressed start keytimer to capture code
-          if (String(wg.getWiegandType()) == "4" && String(wg.getCode(), HEX) == "1b")
+          // When key is pressed AND key is not * or #
+          // Then add key to the current input
+          if (wg.getWiegandType() == WIEGANDTYPE_KEYPRESS /*  && keyTimer > 0 */ && String(wg.getCode(), HEX) != "d"  && String(wg.getCode(), HEX) != "1b")
           {
 #ifdef DEBUG
-            Serial.println("Start capture keycode . . .");
+            Serial.println("Keycode captured. . .");
 #endif
-            CurrentInput = "";
-            keyTimer = millis();
-          }
 
-          // When key is pressed AND timer is running AND key is not * or #
-          // Then add key to the current input
-          if (String(wg.getWiegandType()) == "4" && keyTimer > 0 && String(wg.getCode(), HEX) != "d"  && String(wg.getCode(), HEX) != "1b")
-          {
             CurrentInput = CurrentInput + String(wg.getCode());
             keyTimer = millis();
           }
 
           // When # is pressed stop keytimer to capture code
-          if (String(wg.getWiegandType()) == "4" && keyTimer > 0 && String(wg.getCode(), HEX) == "d")
+          if (wg.getWiegandType() ==  WIEGANDTYPE_KEYPRESS && keyTimer > 0 && String(wg.getCode(), HEX) == "d")
           {
 #ifdef DEBUG
             Serial.println("Stop capture keycode . . .");
@@ -226,6 +220,17 @@ void ICACHE_FLASH_ATTR rfidloop()
 		return;
 	}
 #endif
+
+	if (keyTimer >0) // we are still waiting for keycode to build up
+	{
+		return;
+		#ifdef DEBUG
+				Serial.println("[ INFO ] return ");
+		#endif
+
+	}
+
+
 #ifdef OFFICIALBOARD
 	if (wg.available())
 	{

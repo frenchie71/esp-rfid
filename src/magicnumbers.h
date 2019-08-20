@@ -24,3 +24,6 @@
 // if the file grows above this size, we will truncate it.
 
 #define MAXLOGSIZE 20000
+#define WIEGANDTYPE_KEYPRESS 4
+#define WIEGANDTYPE_PICC26 26
+#define WIEGANDTYPE_PICC34 34
