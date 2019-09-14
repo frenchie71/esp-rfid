@@ -40,6 +40,10 @@ SOFTWARE.
 #include <Bounce2.h>
 #include "magicnumbers.h"
 
+#include "actors/Actor.h"
+
+
+
  // #define DEBUG
 
 int numRelays=1;
