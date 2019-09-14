@@ -1,3 +1,13 @@
+// ///////////////////////////////////////////////
+// helpers.cpp
+// ///////////////////////////////////////////////
+// generic helper functions such as
+// printing an IP address, parsing bytes,
+// generating a UID etc.
+// ///////////////////////////////////////////////
+
+#include "helpers.h"
+
 String ICACHE_FLASH_ATTR printIP(IPAddress adress) {
 	return (String)adress[0] + "." + (String)adress[1] + "." + (String)adress[2] + "." + (String)adress[3];
 }
@@ -13,7 +23,9 @@ void ICACHE_FLASH_ATTR parseBytes(const char *str, char sep, byte *bytes, int ma
 	}
 }
 
-String ICACHE_FLASH_ATTR generateUid(int type = 0, int length = 12) {
+String ICACHE_FLASH_ATTR generateUid(int type, int length) {
+
+	//length=12;
 
 	// nardev: this could be implemented in config, to choose default type of UID;
 

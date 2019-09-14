@@ -34,7 +34,8 @@ SOFTWARE.
 #include <ESPAsyncWebServer.h>
 #include <TimeLib.h>
 #include <Ticker.h>
-#include "Ntp.h"
+#include "utils/Ntp.h"
+#include "utils/helpers.h"
 #include <AsyncMqttClient.h>
 #include <Bounce2.h>
 #include "magicnumbers.h"
@@ -162,7 +163,6 @@ bool mqttEvents 		= false; // Sends events over MQTT disables SPIFFS file loggin
 
 #include "log.esp"
 #include "mqtt.esp"
-#include "helpers.esp"
 #include "wsResponses.esp"
 #include "rfid.esp"
 #include "wifi.esp"
