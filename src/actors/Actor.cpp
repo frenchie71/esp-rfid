@@ -1,9 +1,13 @@
-/*
- * ntp.cpp
- *
- *  Created on: 8 Mar 2016
- *      Author: joe
- */
+// ////////////////////////////////////////////
+// Actor object definition file
+// ////////////////////////////////////////////
+// an actor generically speaking is a device
+// that can be triggered
+// such as a relay or an LED or a buzzer etc.
+// it can be local (gpio)
+// or remote (mqtt/http etc.)
+// ////////////////////////////////////////////
+// ////////////////////////////////////////////
 
 #include "Actor.h"
 
