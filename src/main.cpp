@@ -39,36 +39,40 @@ SOFTWARE.
 #include <AsyncMqttClient.h>
 #include <Bounce2.h>
 #include "magicnumbers.h"
-
 #include "actors/Actor.h"
-
-
-
- // #define DEBUG
-
-int numRelays=1;
-
-#ifdef OFFICIALBOARD
-
 #include <Wiegand.h>
 
 WIEGAND wg;
+int numRelays=1;
+
+// //////////////////////////////////////
+// official board specific libraries
+// defines and global vars
+// //////////////////////////////////////
+
+
+#ifdef OFFICIALBOARD
+
 int relayPin[MAX_NUM_RELAYS] = {13};
 bool activateRelay [MAX_NUM_RELAYS]= {false};
 bool deactivateRelay [MAX_NUM_RELAYS]= {false};
 
 #endif
 
+// //////////////////////////////////////
+// generic board specific libraries
+// defines and global vars
+// //////////////////////////////////////
+
+
 #ifndef OFFICIALBOARD
 
 #include <MFRC522.h>
-#include "PN532.h"
-#include <Wiegand.h>
-#include "rfid125kHz.h"
+#include "sensors/PN532.h"
+#include "sensors/rfid125kHz.h"
 
 MFRC522 mfrc522 = MFRC522();
 PN532 pn532;
-WIEGAND wg;
 RFID_Reader RFIDr;
 
 int rfidss;
